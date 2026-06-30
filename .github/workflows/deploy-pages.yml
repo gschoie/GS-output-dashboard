@@ -59,6 +59,20 @@ jobs:
                     <a href="https://colab.research.google.com/drive/1Cih5yOxuL6KzSDDKWjkjWUPQA-CP7nyO?usp=sharing" target="_blank" rel="noopener">건기 · 확정</a>
                     <a href="https://colab.research.google.com/drive/1AsA6jqU-GqUfwYsNlcgrfdxsJ6upBpNo?usp=sharing" target="_blank" rel="noopener">건기 · 잠정</a>
                   </div>
+                </details>
+                <details class="nav-group">
+                  <summary>◆ <span>도구 바로가기</span></summary>
+                  <div class="nav-submenu">
+                    <a href="https://gemini.google.com/gem/6c5032cc72cc?usp=sharing" target="_blank" rel="noopener">기업.톺아보기</a>
+                    <a href="https://gemini.google.com/gem/7567970d123e?usp=sharing" target="_blank" rel="noopener">TW번역</a>
+                    <a href="https://gemini.google.com/gem/6de4c11680fc" target="_blank" rel="noopener">해외방산뉴스.요약-텔레</a>
+                    <a href="https://gemini.google.com/gem/7a05ed301b3e?usp=sharing" target="_blank" rel="noopener">한국기사.요약-텔레</a>
+                    <a href="https://gemini.google.com/gem/1VAk4wJP8zKwjfqx8lL9cF7HDakePAEp_?usp=sharing" target="_blank" rel="noopener">오탈자.체크</a>
+                    <a href="https://gemini.google.com/gem/faaa023705b8" target="_blank" rel="noopener">재무제표.점검</a>
+                    <a href="https://gemini.google.com/gem/a7f3fb1d0136" target="_blank" rel="noopener">답안한 애널 찾기</a>
+                    <a href="https://postyud.parkingweb.kr/login" target="_blank" rel="noopener">포스트타워.주차</a>
+                    <a href="https://script.google.com/home/projects/1RkSI__bcEObST0a6Ig5zgXL9GPHdIOCBTViYZziCC-wTcHPOk3QUnWlu/edit?hl=ko" target="_blank" rel="noopener">환율 다운로드.GAS</a>
+                  </div>
                 </details>'''
           if "수출입데이터" not in html:
               if marker not in html:
