@@ -68,7 +68,7 @@ jobs:
         working-directory: telegram_research_dashboard
         env:
           DASHBOARD_OUTPUT: _site/index.html
-        run: python -c 'from pathlib import Path; p=Path("static/index.html"); s=p.read_text(encoding="utf-8"); a="      <details class=\"nav-group\">"; n="      <a class=\"nav nav-external\" href=\"https://colab.research.google.com/drive/1hpZbkTDh8JO4U8wLdiYqnOZ2_WbmzNN3\" target=\"_blank\" rel=\"noopener\">↗ <span>피어그룹 주가 비교</span></a>\n"; p.write_text(s.replace(a,n+a,1),encoding="utf-8")'; python build_static.py
+        run: python build_static.py
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
