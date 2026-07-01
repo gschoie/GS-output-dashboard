@@ -58,6 +58,7 @@ jobs:
                     <a href="https://colab.research.google.com/drive/1taiTQJlS2TiTkNrkfW6hauBqkj6xua3T?usp=sharing" target="_blank" rel="noopener">방산 · 잠정</a>
                     <a href="https://colab.research.google.com/drive/1Cih5yOxuL6KzSDDKWjkjWUPQA-CP7nyO?usp=sharing" target="_blank" rel="noopener">건기 · 확정</a>
                     <a href="https://colab.research.google.com/drive/1AsA6jqU-GqUfwYsNlcgrfdxsJ6upBpNo?usp=sharing" target="_blank" rel="noopener">건기 · 잠정</a>
+                    <a href="https://script.google.com/home/projects/1RkSI__bcEObST0a6Ig5zgXL9GPHdIOCBTViYZziCC-wTcHPOk3QUnWlu/edit?hl=ko" target="_blank" rel="noopener">환율 다운로드.GAS</a>
                   </div>
                 </details>
                 <details class="nav-group">
@@ -71,7 +72,6 @@ jobs:
                     <a href="https://gemini.google.com/gem/faaa023705b8" target="_blank" rel="noopener">재무제표.점검</a>
                     <a href="https://gemini.google.com/gem/a7f3fb1d0136" target="_blank" rel="noopener">답안한 애널 찾기</a>
                     <a href="https://postyud.parkingweb.kr/login" target="_blank" rel="noopener">포스트타워.주차</a>
-                    <a href="https://script.google.com/home/projects/1RkSI__bcEObST0a6Ig5zgXL9GPHdIOCBTViYZziCC-wTcHPOk3QUnWlu/edit?hl=ko" target="_blank" rel="noopener">환율 다운로드.GAS</a>
                   </div>
                 </details>'''
           if "수출입데이터" not in html:
@@ -83,7 +83,7 @@ jobs:
           css = styles.read_text(encoding="utf-8")
           extra = '''
           .nav-group{color:#9fafaa}.nav-group summary{list-style:none;border-radius:8px;padding:12px 14px;font-size:14px;cursor:pointer}.nav-group summary::-webkit-details-marker{display:none}.nav-group summary span{margin-left:10px}.nav-group summary:hover,.nav-group[open] summary{background:#264039;color:white}.nav-group[open] summary{margin-bottom:7px}.nav-submenu{display:grid;gap:5px;margin-left:18px;padding-left:13px;border-left:1px solid #365047}.nav-submenu a{color:#aebdb7;text-decoration:none;border-radius:6px;padding:9px 10px;font-size:12px;line-height:1.25}.nav-submenu a:hover{background:#203a33;color:var(--lime)}
-          @media(max-width:950px){.nav-group span,.nav-submenu{display:none}}
+          @media(max-width:950px){.nav-group{position:relative}.nav-group summary span{display:none}.nav-group:not([open]) .nav-submenu{display:none}.nav-group[open] .nav-submenu{display:grid;position:fixed;left:64px;width:230px;max-height:70vh;overflow-y:auto;margin-top:-43px;padding:10px;background:#12261f;border:1px solid #365047;border-radius:8px;box-shadow:0 12px 28px rgba(0,0,0,.35);z-index:1000}}
           '''
           if ".nav-group{" not in css:
               styles.write_text(css + extra, encoding="utf-8")
