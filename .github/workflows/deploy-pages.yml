@@ -71,8 +71,10 @@ jobs:
         env:
           DASHBOARD_OUTPUT: _site/index.html
         run: |
-          python build_hhiun_report.py
           python build_static.py
+          if [ -f ../hhiun_board_report.html ]; then
+            cp ../hhiun_board_report.html _site/hhiun_board_report.html
+          fi
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
