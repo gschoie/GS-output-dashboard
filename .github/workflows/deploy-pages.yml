@@ -49,6 +49,7 @@ jobs:
           fi
 
       - name: 공개 텔레그램 최신 글 수집
+        if: github.event_name == 'schedule'
         working-directory: telegram_research_dashboard
         shell: bash
         run: |
