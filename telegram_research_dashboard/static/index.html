@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>리서치 데스크</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span>GS</span><div>최광식의 작업들<small>RESEARCH ARCHIVE</small></div></div>
+    <nav>
+      <button class="nav active" data-view="overview">⌂ <span>오늘의 요약</span></button>
+      <button class="nav" data-view="reports">▤ <span>발간 보고서</span></button>
+      <button class="nav" data-view="news">⌁ <span>뉴스 아카이브</span></button>
+      <button class="nav" data-view="press">▦ <span>┗보도기사 W취합</span></button>
+      <button class="nav" data-view="union-board">⚓ <span>현중 노조게시판</span></button>
+      <a class="nav nav-external" href="https://colab.research.google.com/drive/1hpZbkTDh8JO4U8wLdiYqnOZ2_WbmzNN3" target="_blank" rel="noopener">↗ <span>피어그룹 주가 비교</span></a>
+      <details class="nav-group">
+        <summary>⇄ <span>수출입데이터</span></summary>
+        <div class="nav-submenu">
+          <a href="https://colab.research.google.com/drive/1Cih5yOxuL6KzSDDKWjkjWUPQA-CP7nyO?usp=sharing" target="_blank" rel="noopener">방산 · 확정</a>
+          <a href="https://colab.research.google.com/drive/1taiTQJlS2TiTkNrkfW6hauBqkj6xua3T?usp=sharing" target="_blank" rel="noopener">방산 · 잠정</a>
+          <a href="https://colab.research.google.com/drive/1Cih5yOxuL6KzSDDKWjkjWUPQA-CP7nyO?usp=sharing" target="_blank" rel="noopener">건기 · 확정</a>
+          <a href="https://colab.research.google.com/drive/1AsA6jqU-GqUfwYsNlcgrfdxsJ6upBpNo?usp=sharing" target="_blank" rel="noopener">건기 · 잠정</a>
+        </div>
+      </details>
+      <a class="nav nav-external" href="https://script.google.com/home/projects/1RkSI__bcEObST0a6Ig5zgXL9GPHdIOCBTViYZziCC-wTcHPOk3QUnWlu/edit?hl=ko" target="_blank" rel="noopener">₩ <span>환율 다운로드</span></a>
+      <details class="nav-group">
+        <summary>◆ <span>GEMS</span></summary>
+        <div class="nav-submenu">
+          <a href="https://gemini.google.com/gem/6c5032cc72cc?usp=sharing" target="_blank" rel="noopener">기업.톺아보기</a>
+          <a href="https://gemini.google.com/gem/7567970d123e?usp=sharing" target="_blank" rel="noopener">TW번역</a>
+          <a href="https://gemini.google.com/gem/6de4c11680fc" target="_blank" rel="noopener">해외방산뉴스.요약-텔레</a>
+          <a href="https://gemini.google.com/gem/7a05ed301b3e?usp=sharing" target="_blank" rel="noopener">한국기사.요약-텔레</a>
+          <a href="https://gemini.google.com/gem/1VAk4wJP8zKwjfqx8lL9cF7HDakePAEp_?usp=sharing" target="_blank" rel="noopener">오탈자.체크</a>
+          <a href="https://gemini.google.com/gem/faaa023705b8" target="_blank" rel="noopener">재무제표.점검</a>
+          <a href="https://gemini.google.com/gem/a7f3fb1d0136" target="_blank" rel="noopener">답안한 애널 찾기</a>
+        </div>
+      </details>
+      <button class="nav" data-view="tone">👥 <span>DAOL 리서치 톤</span></button>
+    </nav>
+    <div class="secure">● 로컬 대시보드<br><small>공개채널 자료를 이 PC에 정리합니다</small></div>
+  </aside>
+  <main>
+    <header>
+      <div><p class="eyebrow">MARKET INTELLIGENCE</p><h1 id="page-title">오늘의 리서치 흐름</h1></div>
+      <div class="header-tools"><div class="search-wrap"><span>⌕</span><input id="search" placeholder="기업, 보고서, 키워드 검색"></div><div class="update-meta"><span></span>최종 업데이트 <strong id="updated-at">확인 중</strong></div></div>
+    </header>
+
+    <section id="overview" class="view active">
+      <div class="stats">
+        <article><small>발간 보고서</small><strong id="stat-reports">—</strong><em>누적 수집</em></article>
+        <article><small>뉴스·속보</small><strong id="stat-news">—</strong><em>누적 수집</em></article>
+        <article><small>TP 상향</small><strong id="stat-upgrades">—</strong><em class="positive">긍정 시그널</em></article>
+        <article><small>검토 필요</small><strong id="stat-reviews">—</strong><em class="warning">분류 확인</em></article>
+      </div>
+      <div class="grid">
+        <section class="panel wide"><div class="panel-head"><div><small>LATEST RESEARCH</small><h2>최근 발간 보고서</h2></div><button data-go="reports">전체 보기 →</button></div><div id="latest-reports"></div></section>
+        <section class="panel"><div class="panel-head"><div><small>MOST MENTIONED</small><h2>기업별 언급</h2></div></div><div id="company-rank"></div></section>
+        <section class="panel wide"><div class="panel-head"><div><small>BREAKING & NEWS</small><h2>최근 뉴스</h2></div><button data-go="news">주간 보기 →</button></div><div id="latest-news" class="news-grid"></div></section>
+      </div>
+    </section>
+
+    <section id="reports" class="view">
+      <div class="toolbar"><div><button class="chip active" data-type="">전체</button><button class="chip" data-type="기업분석">기업분석</button><button class="chip" data-type="산업분석">산업분석</button><button class="chip" data-type="위클리">위클리</button></div><select id="report-company"><option value="">모든 기업</option></select></div>
+      <div id="weekly-folders" class="weekly-folders" hidden><button class="folder active" data-weekly=""><span>▤</span><b>전체 위클리</b><small id="weekly-all-count"></small></button><button class="folder" data-weekly="다올선박"><span>▤</span><b>다올선박</b><small id="weekly-daol-count"></small></button><button class="folder" data-weekly="한투시절"><span>▤</span><b>한투시절</b><small id="weekly-kis-count"></small></button><button class="folder" data-weekly="하이투자증권시절"><span>▤</span><b>하이투자증권시절</b><small id="weekly-hi-count"></small></button></div>
+      <section class="panel"><div id="report-table"></div></section>
+    </section>
+
+    <section id="news" class="view">
+      <div class="archive-intro"><div><p class="eyebrow">NEWS ARCHIVE</p><h2>연도·월별 뉴스 디렉토리</h2></div><p>연도를 눌러 접고 펼칠 수 있습니다.</p></div>
+      <div class="toolbar"><p>전체 기간 · 최신순</p><select id="news-company"><option value="">모든 기업</option></select></div>
+      <div id="news-list"></div>
+    </section>
+
+    <section id="press" class="view">
+      <div class="archive-intro"><div><p class="eyebrow">PRESS DIGEST</p><h2>기간별 보도기사 취합</h2></div><p>조선 · 방산 · 건설기계 3개 섹터</p></div>
+      <div class="press-filter">
+        <label>시작일<input id="press-start" type="date"></label>
+        <span>—</span>
+        <label>종료일<input id="press-end" type="date"></label>
+        <button id="press-refresh" type="button">리프레시</button>
+        <button id="press-export" class="export-button" type="button">엑셀 다운로드</button>
+        <strong id="press-count">0건</strong>
+      </div>
+      <div id="press-table"></div>
+    </section>
+
+    <section id="union-board" class="view">
+      <div class="archive-intro"><div><p class="eyebrow">UNION BOARD WATCH</p><h2>현중 노조게시판 주간·월간 주목 글</h2></div><p>조회수 · 조회 증가속도 · 댓글 반응 종합</p></div>
+      <div class="union-board-toolbar">
+        <button id="union-board-refresh" type="button">새로고침</button>
+        <label class="union-board-file">HTML 보고서 선택<input id="union-board-file" type="file" accept=".html,text/html"></label>
+        <a class="export-button" href="hhiun_board_report.html" target="_blank" rel="noopener">전체 화면으로 열기</a>
+        <span id="union-board-status">보고서를 불러오는 중</span>
+      </div>
+      <iframe id="union-board-frame" class="union-board-frame" title="현중 노조게시판 분석 보고서" loading="lazy"></iframe>
+    </section>
+
+    <section id="tone" class="view">
+      <div class="archive-intro"><div><p class="eyebrow">DAOL MONTHLY RESEARCH</p><h2>월별 애널리스트·섹터 리서치 종합</h2></div><p>최신 월 우선 · 발간 자료, Pitch, 산업 결론, TP 변경과 섹터 선호주를 한 번에 봅니다.</p></div>
+      <div class="tone-toolbar">
+        <input id="tone-search" placeholder="애널리스트·섹터·종목 검색">
+        <select id="tone-month"><option value="">전체 월</option></select>
+        <select id="tone-analyst"><option value="">전체 애널리스트</option></select>
+        <button id="tone-refresh" type="button">새로고침</button>
+        <span id="tone-status">대기 중</span>
+      </div>
+      <div id="tone-content"></div>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
