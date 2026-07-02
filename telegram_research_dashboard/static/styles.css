@@ -43,3 +43,4 @@
   .nav-group[open] .nav-submenu a{display:block;color:#e4ece8;padding:12px 13px;font-size:13px}
 }
 .tone-card>header h3 small{margin-left:7px;color:var(--muted);font-size:12px;font-weight:500}.tone-tp-하향{border-left-color:#b44b41}.tone-tp-유지{border-left-color:#8b948f}.tone-report{margin-top:10px;padding:13px 0;border-top:1px solid var(--line);font-size:12px}.tone-report-head{display:flex;align-items:center;gap:7px;margin-bottom:5px}.tone-report-point{margin:8px 0;padding:9px 11px;background:#f5f7f4;line-height:1.6}.tone-report-point b{display:block;color:#386453;font-size:10px;letter-spacing:.05em;text-transform:uppercase}.tone-report-point.conclusion{background:#f7f3e9}.tone-card details[open]>summary{margin-bottom:6px}
+.month-divider{cursor:pointer;list-style:none}.month-divider::-webkit-details-marker{display:none}.month-divider:before{content:'＋';font:11px sans-serif;color:#79837e}.month-group[open]>.month-divider:before{content:'－'}

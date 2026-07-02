@@ -112,6 +112,15 @@ https://example.com/defense"""
         self.assertEqual(item["title"], "최성안 부회장, 자사주 1만주 추가 매입")
         self.assertEqual(item["company_name"], "삼성중공업")
 
+    def test_full_quoted_title_and_title_company_override_related_news(self):
+        item = parse_news_items("美 ITC, 두산밥캣\nhttps://example.com/article")[0]
+        enrich_news_item(item, lambda _url: {
+            "title": "美 ITC, 두산밥캣 '특허침해 혐의' 조사 착수…철저한 '법적 대응' 예고",
+            "description": "두산밥캣 특허 분쟁 기사",
+            "text": "기사 하단 관련 뉴스: LIG D&A 해성 검토",
+        })
+        self.assertEqual(item["companies"], ["두산밥캣"])
+
     def test_korean_comment_stuck_to_url_is_not_part_of_url(self):
         item = parse_news_items("https://buly.kr/4bi1ueA오오~")[0]
         self.assertEqual(item["article_url"], "https://buly.kr/4bi1ueA")

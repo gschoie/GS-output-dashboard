@@ -10,20 +10,21 @@ from db import connect, initialize
 from telegram_importer import link_companies
 
 
-def run(limit: int) -> tuple[int, int]:
+def run(limit: int, force_all: bool = False) -> tuple[int, int]:
     initialize()
     placeholders = tuple(TITLE_PLACEHOLDERS)
-    sql = """SELECT n.id,n.title,n.article_url,n.event_type,n.summary,n.confidence,n.needs_review
+    scope = "1=1" if force_all else """(n.title IN (?,?) OR COALESCE(n.company_name,'')=''
+                    OR NOT EXISTS (SELECT 1 FROM news_companies nc WHERE nc.news_id=n.id))"""
+    attempts = "1=1" if force_all else "(a.news_id IS NULL OR a.attempted_at < datetime('now','-30 days'))"
+    sql = f"""SELECT n.id,n.title,n.article_url,n.event_type,n.summary,n.confidence,n.needs_review
              FROM news_articles n
              LEFT JOIN article_metadata_attempts a ON a.news_id=n.id
              WHERE n.article_url IS NOT NULL
-               AND (n.title IN (?,?) OR COALESCE(n.company_name,'')=''
-                    OR NOT EXISTS (SELECT 1 FROM news_companies nc WHERE nc.news_id=n.id))
-               AND (a.news_id IS NULL OR a.attempted_at < datetime('now','-30 days'))
+               AND {scope} AND {attempts}
              ORDER BY CASE WHEN a.news_id IS NULL THEN 0 ELSE 1 END,n.id DESC LIMIT ?"""
     checked = updated = 0
     with connect() as conn:
-        rows = conn.execute(sql, (*placeholders, limit)).fetchall()
+        rows = conn.execute(sql, (limit,) if force_all else (*placeholders, limit)).fetchall()
         with ThreadPoolExecutor(max_workers=min(8, max(1, len(rows)))) as executor:
             metadata = list(executor.map(fetch_article_metadata, (row["article_url"] for row in rows)))
         for row, fetched in zip(rows, metadata):
@@ -56,5 +57,6 @@ def run(limit: int) -> tuple[int, int]:
 if __name__ == "__main__":
     cli = argparse.ArgumentParser()
     cli.add_argument("--limit", type=int, default=200)
+    cli.add_argument("--all", action="store_true")
     args = cli.parse_args()
-    run(max(1, args.limit))
+    run(max(1, args.limit), args.all)

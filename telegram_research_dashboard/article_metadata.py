@@ -6,6 +6,7 @@ import html
 import ipaddress
 import re
 import socket
+from html.parser import HTMLParser
 from urllib.parse import urljoin, urlparse
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
@@ -25,6 +26,29 @@ META_TITLE_RE_REVERSED = re.compile(
 HTML_TITLE_RE = re.compile(r"<title\b[^>]*>(.*?)</title>", re.I | re.S)
 BODY_RE = re.compile(r"<body\b[^>]*>(.*?)</body>", re.I | re.S)
 SCRIPT_STYLE_RE = re.compile(r"<(?:script|style|noscript)\b[^>]*>.*?</(?:script|style|noscript)>", re.I | re.S)
+
+
+class ArticleMetadataParser(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.meta, self.in_title, self.title_parts = {}, False, []
+
+    def handle_starttag(self, tag, attrs):
+        values = {key.casefold(): value for key, value in attrs if value is not None}
+        if tag.casefold() == "meta":
+            key = (values.get("property") or values.get("name") or "").casefold()
+            if key and values.get("content"):
+                self.meta[key] = values["content"]
+        elif tag.casefold() == "title":
+            self.in_title = True
+
+    def handle_endtag(self, tag):
+        if tag.casefold() == "title":
+            self.in_title = False
+
+    def handle_data(self, data):
+        if self.in_title:
+            self.title_parts.append(data)
 
 
 def _validate_public_url(url: str) -> None:
@@ -75,14 +99,17 @@ def fetch_article_metadata(url: str, timeout: int = 10) -> dict | None:
                 raw = raw[:MAX_HTML_BYTES]
             charset = response.headers.get_content_charset() or "utf-8"
             source = raw.decode(charset, errors="replace")
-        match = META_TITLE_RE.search(source) or META_TITLE_RE_REVERSED.search(source) or HTML_TITLE_RE.search(source)
-        title = _clean_title(match.group(1)) if match else None
+        parser = ArticleMetadataParser()
+        parser.feed(source)
+        raw_title = parser.meta.get("og:title") or parser.meta.get("twitter:title") or "".join(parser.title_parts)
+        title = _clean_title(raw_title)
+        description = _clean_title(parser.meta.get("og:description", "")) or ""
         body_match = BODY_RE.search(source)
         body = body_match.group(1) if body_match else source
         body = SCRIPT_STYLE_RE.sub(" ", body)
         body = html.unescape(re.sub(r"<[^>]+>", " ", body))
         body = re.sub(r"\s+", " ", body)[:50_000]
-        return {"title": title, "text": body} if title else None
+        return {"title": title, "description": description, "text": body} if title else None
     except (OSError, ValueError, UnicodeError):
         return None
 
@@ -105,7 +132,11 @@ def enrich_news_item(item: dict, metadata_fetcher=fetch_article_metadata) -> dic
     title = fetched.get("title") if fetched else None
     if not title:
         return item
-    companies = extract_companies(f"{title}\n{fetched.get('text', '')}")
+    companies = extract_companies(title)
+    if not companies:
+        companies = extract_companies(fetched.get("description", ""))
+    if not companies:
+        companies = extract_companies(fetched.get("text", ""))
     item["title"] = title
     item["summary"] = title
     item["companies"] = companies
