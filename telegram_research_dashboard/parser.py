@@ -6,7 +6,8 @@ import re
 from urllib.parse import urlparse
 
 
-URL_RE = re.compile(r"https?://[^\s<>\]\)]+")
+# 텔레그램에서 URL 뒤에 공백 없이 붙인 한글 코멘트까지 링크로 먹지 않는다.
+URL_RE = re.compile(r"https?://[A-Za-z0-9._~:/?#\[\]@!$&'()*+,;=%-]+")
 PRICE_RE = re.compile(r"(?:목표주가|TP)\s*[:：]?\s*([0-9,]+)\s*원?", re.I)
 PREVIOUS_PRICE_RE = re.compile(r"(?:기존|종전)\s*(?:목표주가|TP)?\s*[:：]?\s*([0-9,]+)\s*원?", re.I)
 OPINION_RE = re.compile(r"(?:투자의견|의견)\s*[:：]?\s*([A-Za-z가-힣 ]{2,16})", re.I)

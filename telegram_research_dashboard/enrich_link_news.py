@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 
-from article_metadata import TITLE_PLACEHOLDERS, enrich_news_item, fetch_article_title
+from article_metadata import TITLE_PLACEHOLDERS, enrich_news_item, fetch_article_metadata
 from db import connect, initialize
 from telegram_importer import link_companies
 
@@ -16,18 +16,20 @@ def run(limit: int) -> tuple[int, int]:
     sql = """SELECT n.id,n.title,n.article_url,n.event_type,n.summary,n.confidence,n.needs_review
              FROM news_articles n
              LEFT JOIN article_metadata_attempts a ON a.news_id=n.id
-             WHERE n.article_url IS NOT NULL AND n.title IN (?,?)
+             WHERE n.article_url IS NOT NULL
+               AND (n.title IN (?,?) OR COALESCE(n.company_name,'')=''
+                    OR NOT EXISTS (SELECT 1 FROM news_companies nc WHERE nc.news_id=n.id))
                AND (a.news_id IS NULL OR a.attempted_at < datetime('now','-30 days'))
              ORDER BY CASE WHEN a.news_id IS NULL THEN 0 ELSE 1 END,n.id DESC LIMIT ?"""
     checked = updated = 0
     with connect() as conn:
         rows = conn.execute(sql, (*placeholders, limit)).fetchall()
         with ThreadPoolExecutor(max_workers=min(8, max(1, len(rows)))) as executor:
-            titles = list(executor.map(fetch_article_title, (row["article_url"] for row in rows)))
-        for row, fetched_title in zip(rows, titles):
+            metadata = list(executor.map(fetch_article_metadata, (row["article_url"] for row in rows)))
+        for row, fetched in zip(rows, metadata):
             checked += 1
             item = {**dict(row), "companies": [], "company_name": None}
-            enrich_news_item(item, lambda _url, title=fetched_title: title)
+            enrich_news_item(item, lambda _url, value=fetched: value)
             success = int(item["title"] not in TITLE_PLACEHOLDERS)
             conn.execute(
                 """INSERT INTO article_metadata_attempts(news_id,attempted_at,success)

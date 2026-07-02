@@ -64,7 +64,7 @@ jobs:
 
       - name: 링크 기사 제목 및 기업 보강
         working-directory: telegram_research_dashboard
-        run: python enrich_link_news.py --limit 200
+        run: python enrich_link_news.py --limit 5000
 
       - name: 배포용 HTML 생성
         working-directory: telegram_research_dashboard

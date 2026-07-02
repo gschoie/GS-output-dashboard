@@ -23,6 +23,8 @@ META_TITLE_RE_REVERSED = re.compile(
     re.I,
 )
 HTML_TITLE_RE = re.compile(r"<title\b[^>]*>(.*?)</title>", re.I | re.S)
+BODY_RE = re.compile(r"<body\b[^>]*>(.*?)</body>", re.I | re.S)
+SCRIPT_STYLE_RE = re.compile(r"<(?:script|style|noscript)\b[^>]*>.*?</(?:script|style|noscript)>", re.I | re.S)
 
 
 def _validate_public_url(url: str) -> None:
@@ -52,8 +54,8 @@ def _clean_title(value: str) -> str | None:
     return value[:240] if len(value) >= 4 else None
 
 
-def fetch_article_title(url: str, timeout: int = 10) -> str | None:
-    """원문 HTML의 og:title 또는 title을 반환하며 실패 시 None을 반환한다."""
+def fetch_article_metadata(url: str, timeout: int = 10) -> dict | None:
+    """원문 HTML에서 제목과 기업 판별용 본문 텍스트를 반환한다."""
     try:
         _validate_public_url(url)
         request = Request(
@@ -74,19 +76,36 @@ def fetch_article_title(url: str, timeout: int = 10) -> str | None:
             charset = response.headers.get_content_charset() or "utf-8"
             source = raw.decode(charset, errors="replace")
         match = META_TITLE_RE.search(source) or META_TITLE_RE_REVERSED.search(source) or HTML_TITLE_RE.search(source)
-        return _clean_title(match.group(1)) if match else None
+        title = _clean_title(match.group(1)) if match else None
+        body_match = BODY_RE.search(source)
+        body = body_match.group(1) if body_match else source
+        body = SCRIPT_STYLE_RE.sub(" ", body)
+        body = html.unescape(re.sub(r"<[^>]+>", " ", body))
+        body = re.sub(r"\s+", " ", body)[:50_000]
+        return {"title": title, "text": body} if title else None
     except (OSError, ValueError, UnicodeError):
         return None
 
 
-def enrich_news_item(item: dict, title_fetcher=fetch_article_title) -> dict:
-    """제목이 비어 있는 뉴스 항목을 원문 제목과 기업 분류로 보강한다."""
-    if item.get("title") not in TITLE_PLACEHOLDERS or not item.get("article_url"):
+def fetch_article_title(url: str, timeout: int = 10) -> str | None:
+    metadata = fetch_article_metadata(url, timeout)
+    return metadata["title"] if metadata else None
+
+
+def enrich_news_item(item: dict, metadata_fetcher=fetch_article_metadata) -> dict:
+    """링크 뉴스의 원문 제목과 본문을 기준으로 제목·기업을 보강한다."""
+    if not item.get("article_url"):
         return item
-    title = title_fetcher(item["article_url"])
+    needs_fetch = item.get("title") in TITLE_PLACEHOLDERS or not item.get("company_name")
+    if not needs_fetch:
+        return item
+    fetched = metadata_fetcher(item["article_url"])
+    if isinstance(fetched, str):
+        fetched = {"title": fetched, "text": fetched}
+    title = fetched.get("title") if fetched else None
     if not title:
         return item
-    companies = extract_companies(title)
+    companies = extract_companies(f"{title}\n{fetched.get('text', '')}")
     item["title"] = title
     item["summary"] = title
     item["companies"] = companies
@@ -94,4 +113,3 @@ def enrich_news_item(item: dict, title_fetcher=fetch_article_title) -> dict:
     item["confidence"] = 0.85 if companies else 0.65
     item["needs_review"] = int(not companies)
     return item
-

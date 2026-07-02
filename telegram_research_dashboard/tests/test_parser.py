@@ -103,6 +103,19 @@ https://example.com/defense"""
         enrich_news_item(item, lambda _url: None)
         self.assertEqual(item["title"], "기사 제목 미확인")
 
+    def test_comment_title_is_replaced_and_company_comes_from_article_body(self):
+        item = parse_news_items("오오..\nhttps://example.com/article")[0]
+        enrich_news_item(item, lambda _url: {
+            "title": "최성안 부회장, 자사주 1만주 추가 매입",
+            "text": "삼성중공업은 책임경영 실천의 일환이라고 밝혔다.",
+        })
+        self.assertEqual(item["title"], "최성안 부회장, 자사주 1만주 추가 매입")
+        self.assertEqual(item["company_name"], "삼성중공업")
+
+    def test_korean_comment_stuck_to_url_is_not_part_of_url(self):
+        item = parse_news_items("https://buly.kr/4bi1ueA오오~")[0]
+        self.assertEqual(item["article_url"], "https://buly.kr/4bi1ueA")
+
     def test_summary_post_uses_korean_headline_not_channel_signature(self):
         text = """> 방산 🛫 Indonesia Pulls Out Of KF-21 Co-Production, Could Acquire Jets Directly From South Korea: Reports
 > 인도네시아 KF-21 공동 생산 철회, 한국으로부터 직접 도입 가능성 제기
